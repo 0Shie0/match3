@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://jl414l56gffd"]
+
+[ext_resource type="Texture2D" uid="uid://bvepfh6ueq2xb" path="res://assets/[64x64] Potions.png" id="1_yi0og"]
+
+[resource]
+resource_local_to_scene = true
+atlas = ExtResource("1_yi0og")

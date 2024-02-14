@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://c6pit3gmbi803"]
+
+[ext_resource type="Texture2D" uid="uid://bvepfh6ueq2xb" path="res://assets/[64x64] Potions.png" id="1_o5k2h"]
+[ext_resource type="Script" path="res://scripts/element.gd" id="1_p6jay"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ob0r"]
+size = Vector2(60, 60)
+
+[node name="Area2D" type="Area2D" groups=["element"]]
+script = ExtResource("1_p6jay")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_o5k2h")
+hframes = 3
+vframes = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0ob0r")
