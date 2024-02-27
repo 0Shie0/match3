@@ -120,9 +120,19 @@ func clicked():
 			deselect()
 			GameData.disable_clicked = false
 			return
-		GameData.disable_clicked = true
-		GameData.element_selected2 = self
-		swap()
+		var x = GameData.element_selected1.get_x_place()
+		var y = GameData.element_selected1.get_y_place()
+		var xself = get_x_place()
+		var yself = get_y_place()
+		if abs(x-xself)+ abs(y-yself) == 1:
+			pass
+			GameData.disable_clicked = true
+			GameData.element_selected2 = self
+			swap()
+		else:
+			GameData.element_selected1.deselect()
+			select()
+			GameData.element_selected1 = self
 	else:
 		GameData.element_selected1 = self
 	select()
