@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhokjfbs2cxbj"]
+
+[ext_resource type="Script" path="res://scripts/spawner.gd" id="1_lli0a"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r20jw"]
+size = Vector2(64, 64)
+
+[node name="spawner" type="StaticBody2D" groups=["spawner"]]
+script = ExtResource("1_lli0a")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_r20jw")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -19.0
+offset_top = -21.0
+offset_right = 21.0
+offset_bottom = 19.0

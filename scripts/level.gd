@@ -8,7 +8,7 @@ extends Node2D
 @onready var element = preload("res://scenes/element_v3.tscn")
 @onready var element2 = preload("res://scenes/element_v2.tscn")
 @onready var floor_element = preload("res://scenes/floor.tscn")
-
+@onready var spawner_element = preload("res://scenes/spawner.tscn")
 
 func _ready():
 	GameData.level = self
@@ -30,14 +30,21 @@ func generate_grid():
 		GameData.falling_elements.append(0)
 		GameData.falling_elements_ypos.append(column_len)
 		for j in range(column_len):
-			var q = element.instantiate()
+			var q
+			
+			if not i:
+				q = spawner_element.instantiate()
+				add_child(q)
+				q.position.x = (x)*GameData.element_xsize + starting_point.x
+				q.position.y = (-1)*GameData.element_ysize + starting_point.y
+				q.x = x
+			q = element.instantiate()
 			add_child(q)
 			q.position.x = x*GameData.element_xsize + starting_point.x
 			q.position.y = y*GameData.element_ysize + starting_point.y
 			q.set_color(max_colors)
 			x += 1
 			await get_tree().create_timer(0.01).timeout
-		
 			if i+1 == row_len:
 				q = floor_element.instantiate()
 				add_child(q)
@@ -68,14 +75,14 @@ func get_elements_as_grid():
 		pass
 
 func create_new_elements():
-	var w = 0
-	for i in GameData.falling_elements:
-		if i:
-			for q in range(i):
-				create_element_at(w,-1-q)
-		w += 1
-	pass
-	await get_tree().create_timer(0.1).timeout
+	#var w = 0
+	#for i in GameData.falling_elements:
+		#if i:
+			#for q in range(i):
+				#create_element_at(w,-1-q)
+		#w += 1
+	#pass
+	await get_tree().create_timer(0.2).timeout
 	GameData.falling_elements = []
 	GameData.falling_elements_ypos = []
 	for i in range(row_len):
