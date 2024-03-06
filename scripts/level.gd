@@ -27,8 +27,8 @@ func generate_grid():
 	GameData.falling_elements = []
 	GameData.falling_elements_ypos = []
 	for i in range(row_len):
-		GameData.falling_elements.append(0)
-		GameData.falling_elements_ypos.append(column_len)
+		GameData.falling_elements.append([])
+		GameData.falling_elements_ypos.append(0)
 		for j in range(column_len):
 			var q
 			
@@ -61,7 +61,7 @@ func get_elements_as_grid():
 	var y = 0
 	var temp_arr
 	for i in range(row_len):
-		GameData.falling_elements.append(0)
+		GameData.falling_elements.append([])
 		for j in range(column_len):
 			var q = element.instantiate()
 			add_child(q)
@@ -86,7 +86,7 @@ func create_new_elements():
 	GameData.falling_elements = []
 	GameData.falling_elements_ypos = []
 	for i in range(row_len):
-		GameData.falling_elements.append(0)
+		GameData.falling_elements.append([])
 		GameData.falling_elements_ypos.append(column_len)
 	GameData.disable_clicked=false
 	

@@ -17,9 +17,10 @@ func _ready():
 func create_new_elements():
 	var w = 0
 	for i in GameData.falling_elements:
-		if w==x:
-			for q in range(i):
-				create_element_at(-0-q)
+		if len(i):
+			if w==x:
+				for q in range(len(i)):
+					create_element_at(-0-q)
 		w += 1
 	pass
 	await get_tree().create_timer(0.1).timeout

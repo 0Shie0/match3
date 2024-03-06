@@ -35,13 +35,13 @@ func set_color(_max):
 	color = randi() % _max
 	var q = get_same_left()
 	var r = range(_max)
-	if len(q)>1:
-		r.erase(color)
-		color = r[randi() % (_max-1)]
-	q = get_same_up()
-	if len(q):
-		r.erase(color)
-		color = r[randi() % (_max-2)]
+	#if len(q)>1:
+		#r.erase(color)
+		#color = r[randi() % (_max-1)]
+	#q = get_same_up()
+	#if len(q):
+		#r.erase(color)
+		#color = r[randi() % (_max-2)]
 	$Sprite2D.frame = color*3
 	original_position = position
 
@@ -156,8 +156,10 @@ func swap():
 	
 	var q = check_all_same()
 	var w = GameData.element_selected1.check_all_same()
-	
-	q.append_array(w)
+	for i in w:
+		if not i in q:
+			q.append(i)
+	#q.append_array(w)
 	if len(q):
 		GameData.destroy_elements(q)
 	else:
@@ -274,10 +276,14 @@ func set_first_falling():
 	animate_falling()
 	
 func animate_falling():
-	if get_y_place() < GameData.falling_elements_ypos[get_x_place()]:
+	var is_above_removed = 0
+	for i in GameData.falling_elements[get_x_place()]:
+		if get_y_place() < i:
+			is_above_removed += 1
+	if is_above_removed:
 		tween = get_tree().create_tween()
-		var to_fall = GameData.falling_elements[get_x_place()]
-		tween.tween_property(self, "position" , position + to_fall*Vector2(0,GameData.element_ysize),0.5)
+		var to_fall = is_above_removed #len(GameData.falling_elements[get_x_place()])
+		tween.tween_property(self, "position" , position + to_fall*Vector2(0,GameData.element_ysize),0.1*to_fall)
 		await tween.finished
 		original_position = position
 
