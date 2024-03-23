@@ -13,8 +13,11 @@ func custom_get_used_cells():
 func get_cell_data(coords:Vector2):
 	var w:TileData = get_cell_tile_data(0,coords)
 	if w:
+		var data = {}
+		data["Cell"]= w.get_custom_data("Cell")
+		data["Element"]= w.get_custom_data("Element")
 		var q = w.get_custom_data("Cell")
-		return q
+		return data
 	return -1
 
 func is_cell_element():

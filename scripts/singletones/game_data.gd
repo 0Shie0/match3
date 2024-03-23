@@ -22,6 +22,8 @@ signal falling_locs_calculated
 signal game_info_requested
 signal game_info_given
 
+signal custom_level_info_requested
+
 func destroy_elements(arr):
 	for i in arr:
 		var q = i.get_x_place()

@@ -5,7 +5,7 @@ extends Node2D
 func  _ready():
 	#GameData.game_info_requested.
 	GameData.game_info_requested.connect(on_level_info_requested)
-	GameData.game_info_requested.emit()
+	#GameData.game_info_requested.emit()
 	# var w = await GameData.game_info_given
 
 

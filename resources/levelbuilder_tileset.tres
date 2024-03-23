@@ -1,0 +1,51 @@
+[gd_resource type="TileSet" load_steps=5 format=3 uid="uid://r2honvqg2bgh"]
+
+[ext_resource type="Texture2D" uid="uid://bkgly12yg7bwu" path="res://icon.svg" id="1_yl51w"]
+[ext_resource type="Texture2D" uid="uid://bvepfh6ueq2xb" path="res://assets/[64x64] Potions.png" id="2_lyw5b"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_0ailx"]
+texture = ExtResource("1_yl51w")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+0:1/0 = 0
+0:1/0/custom_data_0 = 2
+1:0/0 = 0
+1:0/0/custom_data_0 = 1
+1:1/0 = 0
+1:1/0/custom_data_0 = 3
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_aa3t0"]
+texture = ExtResource("2_lyw5b")
+texture_region_size = Vector2i(64, 64)
+0:2/0 = 0
+0:2/0/custom_data_0 = -1
+0:2/0/custom_data_1 = 2
+0:0/0 = 0
+0:0/0/custom_data_0 = -1
+0:1/0 = 0
+0:1/0/custom_data_0 = -1
+0:1/0/custom_data_1 = 1
+0:3/0 = 0
+0:3/0/custom_data_0 = -1
+0:3/0/custom_data_1 = 3
+0:4/0 = 0
+0:4/0/custom_data_0 = -1
+0:4/0/custom_data_1 = 4
+0:5/0 = 0
+0:5/0/custom_data_0 = -1
+0:5/0/custom_data_1 = 5
+0:6/0 = 0
+0:6/0/custom_data_0 = -1
+0:6/0/custom_data_1 = 6
+0:7/0 = 0
+0:7/0/custom_data_0 = -1
+0:7/0/custom_data_1 = -1
+
+[resource]
+tile_size = Vector2i(64, 64)
+custom_data_layer_0/name = "Cell"
+custom_data_layer_0/type = 2
+custom_data_layer_1/name = "Element"
+custom_data_layer_1/type = 2
+sources/0 = SubResource("TileSetAtlasSource_0ailx")
+sources/1 = SubResource("TileSetAtlasSource_aa3t0")

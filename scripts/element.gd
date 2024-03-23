@@ -51,6 +51,10 @@ func set_random_color(_max):
 	$Sprite2D.frame = color*3
 	pass
 
+func set_specific_color(color_id):
+	color = color_id
+	$Sprite2D.frame = color*3
+	original_position = position
 
 func get_same_left()->Array:
 	var p2 = Vector2(-2*GameData.element_xsize,0) + position

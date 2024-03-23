@@ -13,13 +13,13 @@ extends Node2D
 func _ready():
 	GameData.level = self
 	GameData.falling_locs_calculated.connect(create_new_elements)
-	generate_grid()
+	GameData.game_info_given.connect(data_info_given)
+	#generate_grid()
+	load_level()
 
 func generate_level():
 	pass
-	
-func load_level():
-	pass
+
 	
 func generate_grid():
 	var x = 0
@@ -91,11 +91,57 @@ func create_new_elements():
 	GameData.disable_clicked=false
 	
 
-func create_element_at(x,y):
+func spawn_element_at(x,y,specific_color=-1):
 	var q = element.instantiate()
 	add_child(q)
 	q.position.x = x*GameData.element_xsize + starting_point.x
 	q.position.y = y*GameData.element_ysize + starting_point.y
-	q.set_color(max_colors)
+	if specific_color != -1:
+		q.set_color(max_colors)
+	else:
+		q.set_specific_color(specific_color)
 	q.animate_falling()
 	pass
+
+func create_element_at(x,y,specific_color=-1):
+	var q = element.instantiate()
+	add_child(q)
+	q.position.x = x*GameData.element_xsize + starting_point.x
+	q.position.y = y*GameData.element_ysize + starting_point.y
+	if specific_color != -1:
+		q.set_specific_color(specific_color)
+	else:
+		q.set_color(max_colors)
+
+func load_level(level_id:String="test_level"):
+	var new_level = load("res://scenes/levels/" + level_id + ".tscn").instantiate()
+	add_child(new_level)
+	await get_tree().create_timer(0.1).timeout
+	GameData.game_info_requested.emit()
+	pass
+
+func data_info_given(data:Array):
+	GameData.falling_elements = []
+	GameData.falling_elements_ypos = []
+	var x = 0
+	var y = 0
+	for i in data:
+		GameData.falling_elements.append([])
+		GameData.falling_elements_ypos.append(0)
+		for j in i:
+			create_cell_from_data(x,y,j)
+			
+			await get_tree().create_timer(0.01).timeout
+			pass
+			x+= 1
+		y+=1
+		x=0
+	pass
+
+func create_cell_from_data(x,y,cell_data):
+	if cell_data["Cell"] == -1:
+		if cell_data["Element"]==-1:
+			create_element_at(x,y)
+		else:
+			create_element_at(x,y,cell_data["Element"])
+
