@@ -281,7 +281,9 @@ func set_first_falling():
 	
 func animate_falling():
 	var is_above_removed = 0
+	var w
 	for i in GameData.falling_elements[get_x_place()]:
+		w = get_y_place()
 		if get_y_place() < i:
 			is_above_removed += 1
 	if is_above_removed:

@@ -144,4 +144,17 @@ func create_cell_from_data(x,y,cell_data):
 			create_element_at(x,y)
 		else:
 			create_element_at(x,y,cell_data["Element"])
+	else:
+		if cell_data["Cell"] == 0:
+			var q = spawner_element.instantiate()
+			add_child(q)
+			q.position.x = x*GameData.element_xsize + starting_point.x
+			q.position.y = y*GameData.element_ysize + starting_point.y
+			q.x = x
+		elif cell_data["Cell"] == 1:
+			var q = floor_element.instantiate()
+			add_child(q)
+			q.position.x = x*GameData.element_xsize + starting_point.x
+			q.position.y = y*GameData.element_ysize + starting_point.y
+		pass
 
