@@ -32,12 +32,13 @@ func generate_grid():
 		for j in range(column_len):
 			var q
 			
-			if not i:
+			if not i: # ceiling?
 				q = spawner_element.instantiate()
 				add_child(q)
 				q.position.x = (x)*GameData.element_xsize + starting_point.x
 				q.position.y = (-1)*GameData.element_ysize + starting_point.y
 				q.x = x
+				#q.set_specific_color(8)
 			q = element.instantiate()
 			add_child(q)
 			q.position.x = x*GameData.element_xsize + starting_point.x
@@ -45,16 +46,19 @@ func generate_grid():
 			q.set_color(max_colors)
 			x += 1
 			await get_tree().create_timer(0.01).timeout
-			if i+1 == row_len:
+			if i+1 == row_len:  # floor?
 				q = floor_element.instantiate()
 				add_child(q)
 				q.position.x = (x-1)*GameData.element_xsize + starting_point.x
 				q.position.y = (y+1)*GameData.element_ysize + starting_point.y
+				#q.set_specific_color(8)
 		y += 1
 		x=0
 	GameData.lowest_position = (row_len-1)*GameData.element_ysize + starting_point.y
 	GameData.highest_position = starting_point.y
 	GameData.level_started = true
+	check_all()
+	# GameData.spawn_fase
 
 func get_elements_as_grid():
 	var x = 0
@@ -91,6 +95,19 @@ func create_new_elements():
 	GameData.disable_clicked=false
 	
 
+func check_all():
+	var elms = []
+	var q =0
+	for i in get_children():
+		q += 1
+		if i.has_method("check_all_same"):
+			var new_arr = i.check_all_same()
+			if len(new_arr)>=3:
+				for el in new_arr:
+					if not el in elms:
+						elms.append(i)
+	print(len("elms"), " len ", q, " elms")
+
 func spawn_element_at(x,y,specific_color=-1):
 	var q = element.instantiate()
 	add_child(q)
@@ -118,7 +135,6 @@ func load_level(level_id:String="test_level"):
 	add_child(new_level)
 	await get_tree().create_timer(0.1).timeout
 	GameData.game_info_requested.emit()
-	pass
 
 func data_info_given(data:Array):
 	GameData.falling_elements = []
@@ -136,7 +152,8 @@ func data_info_given(data:Array):
 			x+= 1
 		y+=1
 		x=0
-	pass
+	
+	check_all()
 
 func create_cell_from_data(x,y,cell_data):
 	if cell_data["Cell"] == -1:

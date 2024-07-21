@@ -15,6 +15,8 @@ var falling_elements = []
 var falling_elements_ypos = []
 var largest_fall:int
 
+var spawn_fase = true
+
 signal all_falling_el_set
 signal all_falling_stopped
 signal falling_locs_calculated

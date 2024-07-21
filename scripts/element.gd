@@ -35,25 +35,28 @@ func set_color(_max):
 	color = randi() % _max
 	var q = get_same_left()
 	var r = range(_max)
-	#if len(q)>1:
-		#r.erase(color)
-		#color = r[randi() % (_max-1)]
-	#q = get_same_up()
-	#if len(q):
-		#r.erase(color)
-		#color = r[randi() % (_max-2)]
+	if len(q):
+		r.erase(color)
+		color = r[randi() % (_max-1)]
+	q = get_same_up()
+	if len(q):
+		r.erase(color)
+		color = r[randi() % (_max-2)]
 	$Sprite2D.frame = color*3
+	$AnimatedSprite2D.frame = color
 	original_position = position
 
 func set_random_color(_max):
 	randomize()
 	color = randi() % _max
 	$Sprite2D.frame = color*3
+	$AnimatedSprite2D.frame = color
 	pass
 
 func set_specific_color(color_id):
 	color = color_id
 	$Sprite2D.frame = color*3
+	$AnimatedSprite2D.frame = color_id
 	original_position = position
 
 func get_same_left()->Array:
@@ -144,9 +147,11 @@ func clicked():
 	
 func select():
 	$Sprite2D.modulate = Color("#808080")
+	$AnimatedSprite2D.modulate = Color("#808080")
 	pass
 func deselect():
 	$Sprite2D.modulate = Color("#ffffff")
+	$AnimatedSprite2D.modulate = Color("#ffffff")
 	pass
 
 func swap():

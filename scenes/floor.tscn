@@ -1,4 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://mqahlawg5w0"]
+[gd_scene load_steps=4 format=3 uid="uid://mqahlawg5w0"]
+
+[ext_resource type="Texture2D" uid="uid://b6n7kihichsoi" path="res://assets/elements/match3_items_wall.png" id="1_3usy5"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_5kg8k"]
 
@@ -10,3 +12,7 @@ physics_material_override = SubResource("PhysicsMaterial_5kg8k")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_gmumr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+texture = ExtResource("1_3usy5")
