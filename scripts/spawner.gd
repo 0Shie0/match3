@@ -14,8 +14,8 @@ func _ready():
 	GameData.falling_locs_calculated.connect(create_new_elements)
 	pass
 
-func create_new_elements():
-	print("f1 create new el")
+func create_new_elements(fall_length):
+	# print("f1 create new el")
 	var w = 0
 	for i in GameData.falling_elements:
 		if len(i):
@@ -34,7 +34,7 @@ func create_new_elements():
 
 
 func create_element_at(_y):
-	print("f2 create el at ",_y)
+	# print("f2 create el at ",_y)
 	var q = element.instantiate()
 	get_parent().add_child(q)
 	q.position.x = position.x

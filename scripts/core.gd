@@ -20,7 +20,7 @@ func _input(event):
 		query1.collide_with_areas = true
 		var result1 = space_state.intersect_point(query1)
 		if result1:
-			print("somethinghs there", query1.position)
+			# print("somethinghs there", query1.position)
 			var q = result1[0].collider
 			var p2 = Vector2(0,-2*GameData.element_ysize) + q.position
 			var p_1 = Vector2(0,-GameData.element_ysize) + q.position

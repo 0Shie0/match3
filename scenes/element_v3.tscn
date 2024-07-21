@@ -65,3 +65,9 @@ shape = SubResource("RectangleShape2D_0ob0r")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_gsl2k")
+
+[node name="mark" type="ColorRect" parent="."]
+visible = false
+offset_right = 22.0
+offset_bottom = 17.0
+color = Color(0.771546, 0.228477, 0.228477, 1)

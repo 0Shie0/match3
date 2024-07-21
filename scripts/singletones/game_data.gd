@@ -38,7 +38,7 @@ func destroy_elements(arr):
 		i.destroy()
 	largest_fall = len(falling_elements.max())
 	await get_tree().create_timer(0.01).timeout
-	falling_locs_calculated.emit()
+	falling_locs_calculated.emit(largest_fall)
 	# for i in get_tree().get_nodes_in_group("element"):
 	#for i in level.get_children():
 	# 	i.check_if_should_fall()

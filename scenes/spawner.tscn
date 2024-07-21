@@ -19,5 +19,6 @@ offset_right = 21.0
 offset_bottom = 19.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
 scale = Vector2(0.25, 0.25)
 texture = ExtResource("2_474xv")

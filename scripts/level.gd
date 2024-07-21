@@ -78,22 +78,23 @@ func get_elements_as_grid():
 		
 		pass
 
-func create_new_elements():
-	#var w = 0
-	#for i in GameData.falling_elements:
-		#if i:
-			#for q in range(i):
-				#create_element_at(w,-1-q)
-		#w += 1
-	#pass
-	await get_tree().create_timer(0.2).timeout
+func create_new_elements(fall_length):
+	print("fakll length ",0.1*fall_length + 0.1)
+	await get_tree().create_timer(0.1*fall_length + 0.1).timeout # should change to how long it would fall
+	print("fall end")
 	GameData.falling_elements = []
 	GameData.falling_elements_ypos = []
 	for i in range(row_len):
 		GameData.falling_elements.append([])
 		GameData.falling_elements_ypos.append(column_len)
-	GameData.disable_clicked=false
-	
+	var new_deletable = check_all()
+	if new_deletable:
+		print("wait to delete new")
+		GameData.destroy_elements(new_deletable)
+	else:
+		GameData.disable_clicked=false
+
+
 
 func check_all():
 	var elms = []
@@ -102,11 +103,16 @@ func check_all():
 		q += 1
 		if i.has_method("check_all_same"):
 			var new_arr = i.check_all_same()
-			if len(new_arr)>=3:
+			if len(new_arr)>1:
 				for el in new_arr:
 					if not el in elms:
 						elms.append(i)
-	print(len("elms"), " len ", q, " elms")
+	var unique = []
+	for i in elms:
+		if not i in unique:
+			unique.append(i)
+	return unique
+	# print(len(unique), " len ", q, " elms")
 
 func spawn_element_at(x,y,specific_color=-1):
 	var q = element.instantiate()
@@ -175,3 +181,9 @@ func create_cell_from_data(x,y,cell_data):
 			q.position.y = y*GameData.element_ysize + starting_point.y
 		pass
 
+func delete_selected():
+	var arr = []
+	for i in get_children():
+		if i.has_meta("color") and i.selected:
+			arr.append(i)
+	GameData.destroy_elements(arr)

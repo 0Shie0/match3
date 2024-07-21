@@ -13,6 +13,7 @@ var original_position
 var falling_position_difference
 var falling_element
 
+var selected:bool = false
 @onready var tween:Tween 
 @onready var element = preload("res://scenes/element_v3.tscn")
 
@@ -146,13 +147,20 @@ func clicked():
 	pass
 	
 func select():
+	selected = true
 	$Sprite2D.modulate = Color("#808080")
 	$AnimatedSprite2D.modulate = Color("#808080")
 	pass
 func deselect():
+	selected = false
 	$Sprite2D.modulate = Color("#ffffff")
 	$AnimatedSprite2D.modulate = Color("#ffffff")
 	pass
+
+func mark():
+	$mark.visible = true
+	await get_tree().create_timer(0.2)
+	$mark.visible = true
 
 func swap():
 	var p1 = GameData.element_selected2.position
@@ -248,19 +256,7 @@ func check_if_should_stop():
 			GameData.disable_clicked = false
 			original_position=position
 			return
-#	var space_state = get_world_2d().direct_space_state
-#	var query1 = PhysicsPointQueryParameters2D.new()
-#	query1.position = position + Vector2(0,GameData.element_ysize)
-#	query1.collide_with_areas = true
-#	var result1 = space_state.intersect_point(query1)
-#	if result1:
-#		if not result1[0].collider.falling:
-#			if position.y >= result1[0].collider.position.y - GameData.element_ysize:
-#				tween.kill()
-#				falling = false
-#				GameData.disable_clicked = false
-#				original_position=position
-#				return
+
 
 func set_first_falling():
 	falling = true
@@ -284,7 +280,7 @@ func set_first_falling():
 			pass
 	animate_falling()
 	
-func animate_falling():
+func animate_falling(max_fall=null):
 	var is_above_removed = 0
 	var w
 	for i in GameData.falling_elements[get_x_place()]:
