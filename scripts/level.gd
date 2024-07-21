@@ -182,8 +182,9 @@ func create_cell_from_data(x,y,cell_data):
 		pass
 
 func delete_selected():
+	GameData.disable_clicked = true
 	var arr = []
 	for i in get_children():
-		if i.has_meta("color") and i.selected:
+		if i.is_in_group("element") and i.selected:
 			arr.append(i)
 	GameData.destroy_elements(arr)

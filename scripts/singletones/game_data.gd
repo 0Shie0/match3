@@ -43,6 +43,9 @@ func destroy_elements(arr):
 	#for i in level.get_children():
 	# 	i.check_if_should_fall()
 
+func prolong_falling(): # ?
+	falling_locs_calculated.emit(largest_fall)
+
 
 func check_if_should_fall():
 	for i in level.get_children():
