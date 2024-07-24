@@ -14,6 +14,7 @@ func _ready():
 	GameData.level = self
 	GameData.falling_locs_calculated.connect(create_new_elements)
 	GameData.game_info_given.connect(data_info_given)
+	#GameData.all_falling_stopped.connect()
 	#generate_grid()
 	load_level()
 
@@ -79,14 +80,36 @@ func get_elements_as_grid():
 		pass
 
 func create_new_elements(fall_length):
-	print("fakll length ",0.1*fall_length + 0.1)
+	if not fall_length:
+		return
+	# need anothher way of figuring out whether all elements have fallen
+	#print("fakll length ",0.1*fall_length + 0.1)
+	#await GameData.all_falling_stopped
+	# should i check for diagonals here?
+	
 	await get_tree().create_timer(0.1*fall_length + 0.1).timeout # should change to how long it would fall
-	print("fall end")
+	# ask game to give amount of places that can be filled from diagonal movement
+	# while such spaces exist
+		# ask game data to get all elements that can fall diagonally
+		# ask game data about spaces that can be filled with diagonal movement again
+		# NOTE should use await somewhere in here
+		# probably wait for lenghth of animation
+	# + wait in the end
 	GameData.falling_elements = []
 	GameData.falling_elements_ypos = []
 	for i in range(row_len):
 		GameData.falling_elements.append([])
 		GameData.falling_elements_ypos.append(column_len)
+	var elms = GameData.get_diagonal_movable_elements()
+	while len(elms):
+		GameData.set_off_diagonal_movement()
+		await get_tree().create_timer(0.1).timeout
+		elms = GameData.get_diagonal_movable_elements()
+	await get_tree().create_timer(1.1).timeout
+	print("fall end")
+	
+	
+
 	var new_deletable = check_all()
 	if new_deletable:
 		print("wait to delete new")
@@ -162,6 +185,9 @@ func data_info_given(data:Array):
 	check_all()
 
 func create_cell_from_data(x,y,cell_data):
+	if cell_data is int:
+		pass
+		return
 	if cell_data["Cell"] == -1:
 		if cell_data["Element"]==-1:
 			create_element_at(x,y)

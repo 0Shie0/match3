@@ -12,14 +12,16 @@ func _ready():
 	max_colors = get_parent().max_colors
 	
 	GameData.falling_locs_calculated.connect(create_new_elements)
+	GameData.falling_diagonal_logs_calculated.connect(create_new_elements_from_diagonal)
 	pass
 
 func create_new_elements(fall_length):
+
 	# print("f1 create new el")
 	var w = 0
 	for i in GameData.falling_elements:
 		if len(i):
-			if w==x:
+			if w==x and len(GameData.falling_elements[x]) and GameData.falling_elements[x][0]>=0:
 				for q in range(len(i)):
 					create_element_at(-0-q)
 		w += 1
@@ -32,6 +34,18 @@ func create_new_elements(fall_length):
 		#GameData.falling_elements_ypos.append(column_len)
 	#GameData.disable_clicked=false
 
+func create_new_elements_from_diagonal():
+	# print("f1 create new el")
+	var w = 0
+	for i in GameData.falling_elements:
+		if len(i):
+			if w==x and len(GameData.falling_elements[x]) and GameData.falling_elements[x][0]>=0:
+				for q in range(len(i)):
+					create_element_at(-0-q)
+		w += 1
+	pass
+	await get_tree().create_timer(0.1).timeout
+
 
 func create_element_at(_y):
 	# print("f2 create el at ",_y)
@@ -41,4 +55,5 @@ func create_element_at(_y):
 	q.position.y = _y*GameData.element_ysize + position.y
 	q.set_color(max_colors)
 	q.animate_falling()
+	#q.move_down()
 	pass
