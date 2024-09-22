@@ -3,13 +3,9 @@ extends Node2D
 @onready var tilemap = %TileMap
 
 func  _ready():
-	#GameData.game_info_requested.
 	GameData.game_info_requested.connect(on_level_info_requested)
-	#GameData.game_info_requested.emit()
-	# var w = await GameData.game_info_given
 
 
-# place in parent
 func on_level_info_requested():
 	var q = get_level_info()
 	GameData.game_info_given.emit(q)

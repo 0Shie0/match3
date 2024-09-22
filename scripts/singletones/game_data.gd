@@ -49,6 +49,9 @@ func destroy_elements(arr):
 	
 	for i in arr:
 		
+		var spawner_above = i.get_spawner_above()
+		if spawner_above:
+			var new_el = spawner_above.create_element_at(0)
 		var q = i.get_x_place()
 		var w = i.get_y_place()
 		if w < falling_elements_ypos[q]:
@@ -59,27 +62,7 @@ func destroy_elements(arr):
 	var space_state = level.get_world_2d().direct_space_state
 	var x = 0
 	var y = 0
-	#for i in range(level.column_len):
-		#for j in range(level.row_len):
-			#var query2 = PhysicsPointQueryParameters2D.new()
-			#query2.position.x = (x)*element_xsize + level.starting_point.x
-			#query2.position.y = (y)*element_ysize + level.starting_point.y
-			#query2.collide_with_areas = true
-			#var result = space_state.intersect_point(query2)
-			#if not result: # if blank space found
-				#query2.position.y -= element_ysize
-				#var result2 = space_state.intersect_point(query2) # check element above void
-				#if not result2 or (result2 and not result2[0].collider.is_in_group("element")):
-					#falling_elements[i].append(j)
-			#y += 1
-		#x += 1
-		#y=0
-	#largest_fall = len(falling_elements.max())
 	
-	# how about that?
-	# get all floor elements, from each go up until there is not element
-	# look only from fall straight down things? for now
-	# falling down elements
 	var floor_elements = get_tree().get_nodes_in_group("floor")
 	var might_fall_diagonally = []
 	var cnt = 0
@@ -96,12 +79,11 @@ func destroy_elements(arr):
 			if not result:
 				start_fall = true
 			elif start_fall:
-				if result and result[0].collider.is_in_group("element"):
-					falling_elements2.append(result[0].collider)
-					falling_elements2_max_ypos[cnt] = result[0]
-				else:
-					
-					if result and not result[0].collider.is_in_group("element"):
+				if result:
+					if result[0].collider.is_in_group("element"):
+						falling_elements2.append(result[0].collider)
+						falling_elements2_max_ypos[cnt] = result[0]
+					else:
 						start_fall = false
 		cnt += 1
 				
@@ -109,7 +91,14 @@ func destroy_elements(arr):
 	if get_diagonal_movable_elements():
 		set_off_diagonal_movement(1)
 	else:
-		falling_locs_calculated.emit(largest_fall)
+		for i in falling_elements2:
+			if i:
+				var spawner_above = i.get_spawner_above()
+				if spawner_above:
+					var new_el = spawner_above.create_element_at(0)
+					if new_el in falling_elements2:
+						print("already there")
+		falling_locs_calculated.emit(1)
 
 
 func prolong_falling(): # ?
@@ -172,7 +161,34 @@ func get_falling_straight_elements():
 					if result and not result[0].collider.is_in_group("element"):
 						start_fall = false
 		cnt += 1
-	
+
+func have_falling_straight_elements():
+	var space_state = level.get_world_2d().direct_space_state
+	var floor_elements = get_tree().get_nodes_in_group("floor")
+	var might_fall_diagonally = []
+	var cnt = 0
+	for i in floor_elements:
+		falling_elements2_max_ypos.append(level.column_len)
+		var query2 = PhysicsPointQueryParameters2D.new()
+		query2.position.x = i.position.x
+		query2.position.y = i.position.y
+		query2.collide_with_areas = true
+		var start_fall = false
+		for j in range(i.position.y/element_ysize):
+			query2.position.y -= element_ysize
+			var result = space_state.intersect_point(query2)
+			# if result[0].collider in falling_elements2 or result[0].collider in diagonally_moving_pieces
+			if not result:# or result[0].collider in falling_elements2 or result[0].collider in diagonally_moving_pieces:
+				start_fall = true
+			elif start_fall:
+				if result:
+					if result[0].collider.is_in_group("element"):
+						return true
+					else:
+						start_fall = false
+		cnt += 1
+	return false
+
 
 func get_diagonal_movable_elements():
 	var arr = []
@@ -184,6 +200,7 @@ func get_diagonal_movable_elements():
 	return arr
 
 func set_off_diagonal_movement(is_starter=0):
+	print("set off diag started")
 	taken_diagonal_spaces = []
 	diagonally_moving_pieces = {}
 	var arr = []
@@ -245,6 +262,7 @@ func set_off_diagonal_movement(is_starter=0):
 				# falling_elements2.append(new_el)
 	#return arr
 	
+	print("set off diag finished")
 	await get_tree().create_timer(0.02).timeout
 	if is_starter:
 		falling_locs_calculated.emit(is_starter)

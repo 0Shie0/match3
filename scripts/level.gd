@@ -84,39 +84,41 @@ func get_elements_as_grid():
 		
 		pass
 
-func create_new_elements(fall_length):
-	if not fall_length:
-		fall_length = 1
-	#	return
-	# need anothher way of figuring out whether all elements have fallen
-	#print("fakll length ",0.1*fall_length + 0.1)
-	#await GameData.all_falling_stopped
-	# should i check for diagonals here?
+func create_new_elements(_fall_length):
+	if not _fall_length:
+		return
 	
-	await get_tree().create_timer(0.1*fall_length + 0.1).timeout # should change to how long it would fall
-	# ask game to give amount of places that can be filled from diagonal movement
-	# while such spaces exist
-		# ask game data to get all elements that can fall diagonally
-		# ask game data about spaces that can be filled with diagonal movement again
-		# NOTE should use await somewhere in here
-		# probably wait for lenghth of animation
-	# + wait in the end
-	var elms = GameData.get_diagonal_movable_elements()
-	print("straing fgalling ended")
-	# await get_tree().create_timer(0.1).timeout
-	print("starting diagonals")
-	while len(elms):
-		print("diagonal piece dfalling")
+	await get_tree().create_timer(0.1+0).timeout # 0.1 is animation length for stuff to fall and die
+	if GameData.have_falling_straight_elements():
+		
 		GameData.falling_elements = []
 		GameData.falling_elements_ypos = []
 		
 		GameData.falling_elements2 = []
 		GameData.falling_elements2_max_ypos = []
+		GameData.destroy_elements([])
+		return
+	var elms = GameData.get_diagonal_movable_elements()
+		
+	# check if any diagonal movement is possible after elements moved
+	print("start diag fall")
+	while len(elms):
+		# start counting again
+		GameData.falling_elements = []
+		GameData.falling_elements_ypos = []
+		
+		GameData.falling_elements2 = []
+		GameData.falling_elements2_max_ypos = []
+	
+	
 		for i in range(column_len):
 			GameData.falling_elements.append([])
 			GameData.falling_elements_ypos.append(row_len)
 		GameData.set_off_diagonal_movement()
-		await get_tree().create_timer(0.1).timeout
+		await get_tree().create_timer(1.1).timeout # wait to fall
+		if GameData.have_falling_straight_elements():
+			GameData.destroy_elements([])
+			return
 		elms = GameData.get_diagonal_movable_elements()
 	print("no more diagonal pieces")
 	await get_tree().create_timer(0.1).timeout
@@ -159,19 +161,18 @@ func check_all():
 		if not i in unique:
 			unique.append(i)
 	return unique
-	# print(len(unique), " len ", q, " elms")
 
-func spawn_element_at(x,y,specific_color=-1):
-	var q = element.instantiate()
-	add_child(q)
-	q.position.x = x*GameData.element_xsize + starting_point.x
-	q.position.y = y*GameData.element_ysize + starting_point.y
-	if specific_color != -1:
-		q.set_color(max_colors)
-	else:
-		q.set_specific_color(specific_color)
-	q.animate_falling()
-	pass
+#func spawn_element_at(x,y,specific_color=-1):
+	#var q = element.instantiate()
+	#add_child(q)
+	#q.position.x = x*GameData.element_xsize + starting_point.x
+	#q.position.y = y*GameData.element_ysize + starting_point.y
+	#if specific_color != -1:
+		#q.set_color(max_colors)
+	#else:
+		#q.set_specific_color(specific_color)
+	#q.animate_falling()
+	#pass
 
 func create_element_at(x,y,specific_color=-1):
 	var q = element.instantiate()
