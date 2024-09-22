@@ -11,8 +11,8 @@ func _ready():
 	row_len = get_parent().row_len
 	max_colors = get_parent().max_colors
 	
-	GameData.falling_locs_calculated.connect(create_new_elements)
-	GameData.falling_diagonal_logs_calculated.connect(create_new_elements_from_diagonal)
+	# GameData.falling_locs_calculated.connect(create_new_elements)
+	#GameData.falling_diagonal_logs_calculated.connect(create_new_elements_from_diagonal)
 	pass
 
 func create_new_elements(fall_length):
@@ -54,6 +54,21 @@ func create_element_at(_y):
 	q.position.x = position.x
 	q.position.y = _y*GameData.element_ysize + position.y
 	q.set_color(max_colors)
-	q.animate_falling()
+	GameData.falling_elements2.append(q)
+	return q
+	# q.animate_falling()
 	#q.move_down()
 	pass
+
+func create_single_element_at(_y):
+	if not len(GameData.diagonally_moving_pieces):
+		return
+	# print("f2 create el at ",_y)
+	var q = element.instantiate()
+	get_parent().add_child(q)
+	q.position.x = position.x
+	q.position.y = _y*GameData.element_ysize + position.y
+	q.set_color(max_colors)
+	GameData.falling_elements2.append(q)
+	#q.move_down()
+	pass 

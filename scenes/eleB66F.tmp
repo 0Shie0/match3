@@ -1,0 +1,73 @@
+[gd_scene load_steps=14 format=3 uid="uid://c6pit3gmbi803"]
+
+[ext_resource type="Texture2D" uid="uid://bvepfh6ueq2xb" path="res://assets/[64x64] Potions.png" id="1_o5k2h"]
+[ext_resource type="Script" path="res://scripts/element.gd" id="1_p6jay"]
+[ext_resource type="Texture2D" uid="uid://b5vq5vh5f4pkg" path="res://assets/elements/match3_items_butterfly.png" id="3_75ql3"]
+[ext_resource type="Texture2D" uid="uid://xi1hd2pqw76f" path="res://assets/elements/match3_items_cube.png" id="4_squst"]
+[ext_resource type="Texture2D" uid="uid://0pdkyntytdbw" path="res://assets/elements/match3_items_flower.png" id="5_6c74v"]
+[ext_resource type="Texture2D" uid="uid://c2y7ljwjdcysi" path="res://assets/elements/match3_items_gem.png" id="6_6mvyu"]
+[ext_resource type="Texture2D" uid="uid://csmke0yeub6yw" path="res://assets/elements/match3_items_leaf.png" id="7_50b07"]
+[ext_resource type="Texture2D" uid="uid://210p7y1h6bou" path="res://assets/elements/match3_items_star.png" id="8_bupry"]
+[ext_resource type="Texture2D" uid="uid://y5aas0f5t3ub" path="res://assets/elements/match3_items_violet.png" id="9_ctpa0"]
+[ext_resource type="Texture2D" uid="uid://b6n7kihichsoi" path="res://assets/elements/match3_items_wall.png" id="10_34f3u"]
+[ext_resource type="Texture2D" uid="uid://dmkyrqh7dojj8" path="res://assets/elements/match3_items_hollow.png" id="11_nvixu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0ob0r"]
+size = Vector2(60, 60)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_gsl2k"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_75ql3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_squst")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_6c74v")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_6mvyu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_50b07")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_bupry")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ctpa0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_34f3u")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_nvixu")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Area2D" type="Area2D" groups=["element"]]
+script = ExtResource("1_p6jay")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("1_o5k2h")
+hframes = 3
+vframes = 8
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0ob0r")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+sprite_frames = SubResource("SpriteFrames_gsl2k")
+
+[node name="mark" type="ColorRect" parent="."]
+visible = false
+offset_right = 22.0
+offset_bottom = 17.0
+color = Color(0.771546, 0.228477, 0.228477, 1)

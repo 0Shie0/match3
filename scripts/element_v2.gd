@@ -16,6 +16,7 @@ var falling_element
 
 @onready var tween:Tween 
 @onready var element = preload("res://scenes/element_v3.tscn")
+
 func _physics_process(delta):
 	if GameData.disable_clicked:
 		check_if_should_fall()
@@ -155,6 +156,11 @@ func destroy():
 	queue_free()
 
 func check_if_should_fall():
+	if self in GameData.falling_elements2:
+		set_falling()
+
+	return
+	
 	var result = []
 	var space_state = get_world_2d().direct_space_state
 	var query1 = PhysicsPointQueryParameters2D.new()
@@ -165,7 +171,7 @@ func check_if_should_fall():
 		falling = false
 		GameData.disable_clicked = false
 		original_position=position
-		query1 = PhysicsPointQueryParameters2D.new() # probably dont need that bit, since phys processs check for stopping
+		query1 = PhysicsPointQueryParameters2D.new()
 		query1.position = position + Vector2(0,-GameData.element_ysize)
 		query1.collide_with_areas = true
 		result1 = space_state.intersect_point(query1)

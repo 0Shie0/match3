@@ -22,4 +22,3 @@ func get_cell_data(coords:Vector2):
 
 func is_cell_element():
 	pass
-

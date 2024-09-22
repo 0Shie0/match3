@@ -217,6 +217,10 @@ func destroy():
 	queue_free()
 
 func check_if_should_fall():
+	if self in GameData.falling_elements2:
+		set_falling()
+
+	return
 	var result = []
 	var space_state = get_world_2d().direct_space_state
 	var query1 = PhysicsPointQueryParameters2D.new()
@@ -286,7 +290,8 @@ func set_first_fallingdelete():
 func animate_falling(max_fall=null):
 	var is_above_removed = 0
 	var is_moved_aside = 0
-	var w
+	var cancel_movement = false
+	var spawner_above = get_spawner_above()
 	if self in GameData.diagonally_moving_pieces:
 		var dir = GameData.diagonally_moving_pieces[self]
 		tween = get_tree().create_tween()
@@ -294,17 +299,41 @@ func animate_falling(max_fall=null):
 		await tween.finished
 		original_position = position
 		return
+	var q = get_y_place()
+	if get_y_place()==0:
+		print("spawned ", self in GameData.falling_elements2, ", ", self in GameData.diagonally_moving_pieces)
+	if self in GameData.falling_elements2: # if falls staright down
+		
+		pass
+		# fall straight down
+		for i in range(1): # get here falling_elements2 same in same row
+			tween = get_tree().create_tween()
+			tween.tween_property(self, "position" , position + Vector2(0,GameData.element_ysize),0.1)
+			await tween.finished
+			original_position = position
+	
+	return
 	for i in GameData.falling_elements[get_x_place()]:
-		if i < 0:
+		if cancel_movement:
 			break
-		w = get_y_place()
+		var w = get_y_place()
 		if get_y_place() < i:
 			is_above_removed += 1 # removed element was lower (assuming there was no walls)
 		if get_y_place()==i:
 			is_moved_aside = 1
+		if GameData.walls[get_x_place()]:
+			var starting_y = -1
+			for y2 in GameData.walls[get_x_place()]:
+				if i > y2 and get_y_place() > y2: # thngs are falling though the floor
+					# and not falling when they need to
+					is_above_removed = 0
+					cancel_movement = true
+					break
 	
 	if is_above_removed:
 		
+		if spawner_above:
+			spawner_above.create_single_element_at(0)
 		pass
 		# if element_below_exist():
 		# do nothing
@@ -349,16 +378,7 @@ func animate_falling(max_fall=null):
 		if not GameData.moving_pieces:
 			# GameData.largest_fall = 0
 			GameData.all_falling_stopped.emit()
-		#	pass
-		# an idea
-		# if element_below_left_exist():
-		# add self y to game data faling elements [get_x_place()]
-		# emit falling from game data
-		# 
-		#var to_fall = is_above_removed #len(GameData.falling_elements[get_x_place()])
-		#tween.tween_property(self, "position" , position + to_fall*Vector2(0,GameData.element_ysize),0.1*to_fall)
-		#await tween.finished
-		#original_position = position
+
 
 func set_falling(): # will probably need to remove that
 	pass
@@ -380,23 +400,35 @@ func element_below_exist(): # dk, will see TODO
 	query2.position = position+Vector2(0,GameData.element_ysize)/4
 	query2.collide_with_areas = true
 	var result1 = space_state.intersect_point(query2)
-	if result1.collider and result1[0].collider.is_in_group("element"):
+	if result1 and result1.collider and result1[0].collider.is_in_group("element"):
 		return true
 	return false
 
 func can_fall_diagonally_left():
+	if get_y_place() < 0 and not self in GameData.falling_elements2 and not self in GameData.diagonally_moving_pieces:
+		return false
 	var space_state = get_world_2d().direct_space_state
 	var query2 = PhysicsPointQueryParameters2D.new()
 	query2.position = position+Vector2(-GameData.element_xsize,GameData.element_ysize)
 	query2.collide_with_areas = true
-	var result1 = space_state.intersect_point(query2)
+	var result1 = space_state.intersect_point(query2) # something on the below left
 	query2.position = position+Vector2(0,GameData.element_ysize)
-	var result2 = space_state.intersect_point(query2)
-	if not result1 and result2:# and result1[0].collider:# and result1[0].collider.is_in_group("element"):
-		return true
+	var result2 = space_state.intersect_point(query2) # something below
+	query2.position =position+Vector2(-GameData.element_xsize,0)
+	var result3 = space_state.intersect_point(query2) # space above diag left
+	var have_fall_place
+	if (not result1 or result1[0].collider in GameData.falling_elements2 or result1[0].collider in GameData.diagonally_moving_pieces):
+		have_fall_place = true
+	if result2 and not (result3 and result3[0].collider.is_in_group("element")):
+		if have_fall_place and not Vector2(get_x_place()-1,get_y_place()+1) in GameData.taken_diagonal_spaces:
+			return true
+		elif result1 and result1[0].collider.is_in_group("element") and (result1[0].collider.can_fall_diagonally()):
+			return true
 	return false
 
 func can_fall_diagonally_right():
+	if get_y_place() < 0:
+		return false
 	var space_state = get_world_2d().direct_space_state
 	var query2 = PhysicsPointQueryParameters2D.new()
 	query2.position = position+Vector2(+GameData.element_xsize,GameData.element_ysize)
@@ -404,9 +436,20 @@ func can_fall_diagonally_right():
 	var result1 = space_state.intersect_point(query2)
 	query2.position = position+Vector2(0,GameData.element_ysize)
 	var result2 = space_state.intersect_point(query2)
-	if not result1 and result2:# and result1[0].collider:# and result1[0].collider.is_in_group("element"):
-		return true
+	query2.position =position+Vector2(+GameData.element_xsize,0)
+	var result3 = space_state.intersect_point(query2) # space above diag right
+	var have_fall_place
+	if (not result1 or result1[0].collider in GameData.falling_elements2 or result1[0].collider in GameData.diagonally_moving_pieces):
+		have_fall_place = true
+	if result2 and not (result3 and result3[0].collider.is_in_group("element")):
+		if have_fall_place and not Vector2(get_x_place()+1,get_y_place()+1) in GameData.taken_diagonal_spaces:
+			return true
+		elif result1 and result1[0].collider.is_in_group("element") and (result1[0].collider.can_fall_diagonally()):
+			return true
 	return false
+
+func can_fall_diagonally():
+	return can_fall_diagonally_left() or can_fall_diagonally_right()
 
 func element_below_left_exist(): # might need to leave this
 	var space_state = get_world_2d().direct_space_state
@@ -486,3 +529,14 @@ func get_wall_above():
 		return true
 	else:
 		return false
+
+func get_spawner_above():
+	var space_state = get_world_2d().direct_space_state
+	var query2 = PhysicsPointQueryParameters2D.new()
+	query2.position = position+Vector2(0,-GameData.element_ysize)
+	query2.collide_with_areas = true
+	var result1 = space_state.intersect_point(query2)
+	if result1 and result1[0].collider.is_in_group("spawner"):
+		return result1[0].collider
+	else:
+		return null

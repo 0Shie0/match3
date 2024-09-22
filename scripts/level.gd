@@ -8,6 +8,7 @@ extends Node2D
 @onready var element = preload("res://scenes/element_v3.tscn")
 @onready var element2 = preload("res://scenes/element_v2.tscn")
 @onready var floor_element = preload("res://scenes/floor.tscn")
+@onready var wall_element = preload("res://scenes/wall.tscn")
 @onready var spawner_element = preload("res://scenes/spawner.tscn")
 
 func _ready():
@@ -26,9 +27,13 @@ func generate_grid():
 	var x = 0
 	var y = 0
 	GameData.falling_elements = []
+	GameData.falling_elements2 = []
+	GameData.falling_elements2_max_ypos = []
 	GameData.falling_elements_ypos = []
+	GameData.walls = []
 	for i in range(row_len):
 		GameData.falling_elements.append([])
+		GameData.walls.append([])
 		GameData.falling_elements_ypos.append(0)
 		for j in range(column_len):
 			var q
@@ -81,7 +86,8 @@ func get_elements_as_grid():
 
 func create_new_elements(fall_length):
 	if not fall_length:
-		return
+		fall_length = 1
+	#	return
 	# need anothher way of figuring out whether all elements have fallen
 	#print("fakll length ",0.1*fall_length + 0.1)
 	#await GameData.all_falling_stopped
@@ -95,25 +101,43 @@ func create_new_elements(fall_length):
 		# NOTE should use await somewhere in here
 		# probably wait for lenghth of animation
 	# + wait in the end
-	GameData.falling_elements = []
-	GameData.falling_elements_ypos = []
-	for i in range(row_len):
-		GameData.falling_elements.append([])
-		GameData.falling_elements_ypos.append(column_len)
 	var elms = GameData.get_diagonal_movable_elements()
+	print("straing fgalling ended")
+	# await get_tree().create_timer(0.1).timeout
+	print("starting diagonals")
 	while len(elms):
+		print("diagonal piece dfalling")
+		GameData.falling_elements = []
+		GameData.falling_elements_ypos = []
+		
+		GameData.falling_elements2 = []
+		GameData.falling_elements2_max_ypos = []
+		for i in range(column_len):
+			GameData.falling_elements.append([])
+			GameData.falling_elements_ypos.append(row_len)
 		GameData.set_off_diagonal_movement()
 		await get_tree().create_timer(0.1).timeout
 		elms = GameData.get_diagonal_movable_elements()
-	await get_tree().create_timer(1.1).timeout
+	print("no more diagonal pieces")
+	await get_tree().create_timer(0.1).timeout
 	print("fall end")
 	
+	
+	GameData.falling_elements = []
+	GameData.falling_elements_ypos = []
+	
+	GameData.falling_elements2 = []
+	GameData.falling_elements2_max_ypos = []
+	for i in range(column_len):
+		GameData.falling_elements.append([])
+		GameData.falling_elements_ypos.append(0)
 	
 
 	var new_deletable = check_all()
 	if new_deletable:
 		print("wait to delete new")
 		GameData.destroy_elements(new_deletable)
+		await get_tree().create_timer(1.1).timeout
 	else:
 		GameData.disable_clicked=false
 
@@ -159,6 +183,8 @@ func create_element_at(x,y,specific_color=-1):
 	else:
 		q.set_color(max_colors)
 
+
+
 func load_level(level_id:String="test_level"):
 	var new_level = load("res://scenes/levels/" + level_id + ".tscn").instantiate()
 	add_child(new_level)
@@ -167,12 +193,18 @@ func load_level(level_id:String="test_level"):
 
 func data_info_given(data:Array):
 	GameData.falling_elements = []
+	GameData.walls = [[],[]] # for side walls
 	GameData.falling_elements_ypos = []
+	column_len = len(data[0])
+	row_len = len(data)
 	var x = 0
 	var y = 0
-	for i in data:
+	for i in data[0]:
 		GameData.falling_elements.append([])
 		GameData.falling_elements_ypos.append(0)
+		for jh in i:
+			GameData.walls.append([])
+	for i in data:
 		for j in i:
 			create_cell_from_data(x,y,j)
 			
@@ -185,27 +217,34 @@ func data_info_given(data:Array):
 	check_all()
 
 func create_cell_from_data(x,y,cell_data):
-	if cell_data is int:
+	if cell_data is int: # nothing
 		pass
 		return
-	if cell_data["Cell"] == -1:
+	if cell_data["Cell"] == -1: # element
 		if cell_data["Element"]==-1:
 			create_element_at(x,y)
 		else:
 			create_element_at(x,y,cell_data["Element"])
 	else:
-		if cell_data["Cell"] == 0:
+		if cell_data["Cell"] == 0: # spawner
 			var q = spawner_element.instantiate()
 			add_child(q)
 			q.position.x = x*GameData.element_xsize + starting_point.x
 			q.position.y = y*GameData.element_ysize + starting_point.y
 			q.x = x
-		elif cell_data["Cell"] == 1:
+		elif cell_data["Cell"] == 1: # wall
+			var q = wall_element.instantiate()
+			add_child(q)
+			q.position.x = x*GameData.element_xsize + starting_point.x
+			q.position.y = y*GameData.element_ysize + starting_point.y
+			GameData.walls[x].append(y)
+		
+		elif cell_data["Cell"] == 2: # wall
 			var q = floor_element.instantiate()
 			add_child(q)
 			q.position.x = x*GameData.element_xsize + starting_point.x
 			q.position.y = y*GameData.element_ysize + starting_point.y
-		pass
+			GameData.walls[x].append(y)
 
 func delete_selected():
 	GameData.disable_clicked = true
