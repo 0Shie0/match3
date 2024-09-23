@@ -1,5 +1,8 @@
 extends Node
 
+var destroy_anim_legth = 0.5
+var fall_anim_length = 0.1
+
 var element_xsize = 64
 var element_ysize = 64
 
@@ -57,8 +60,9 @@ func destroy_elements(arr):
 		if w < falling_elements_ypos[q]:
 			falling_elements_ypos[q] = w
 		i.destroy()
+		
 	# look for hollow spaces
-	await get_tree().create_timer(0.01).timeout
+	await get_tree().create_timer(destroy_anim_legth).timeout
 	var space_state = level.get_world_2d().direct_space_state
 	var x = 0
 	var y = 0

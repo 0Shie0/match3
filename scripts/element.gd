@@ -202,6 +202,8 @@ func check_all_same():
 	return all
 		
 func destroy():
+	$AnimationPlayer.play("destroy")
+	await $AnimationPlayer.animation_finished
 	queue_free()
 
 func animate_falling(max_fall=null):

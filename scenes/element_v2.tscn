@@ -1,5 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://c45ckrlx5m34"]
+[gd_scene load_steps=12 format=3 uid="uid://c45ckrlx5m34"]
 
+[ext_resource type="Shader" path="res://scenes/element_v2.gdshader" id="1_slmlw"]
 [ext_resource type="Texture2D" uid="uid://bvepfh6ueq2xb" path="res://assets/[64x64] Potions.png" id="1_u80mt"]
 
 [sub_resource type="GDScript" id="GDScript_8gspm"]
@@ -226,6 +227,59 @@ func set_falling():
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_adme1"]
 size = Vector2(10, 64)
 
+[sub_resource type="Gradient" id="Gradient_y0jc2"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_tay6b"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_5qne1"]
+invert = true
+color_ramp = SubResource("Gradient_y0jc2")
+noise = SubResource("FastNoiseLite_tay6b")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rwm4h"]
+shader = ExtResource("1_slmlw")
+shader_parameter/progress = 0.0
+shader_parameter/diff = 0.5
+shader_parameter/tt = SubResource("NoiseTexture2D_5qne1")
+
+[sub_resource type="Animation" id="Animation_vh622"]
+resource_name = "destroy"
+length = 0.5
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(1, 1), Vector2(0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_hidyn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r634j"]
+_data = {
+"RESET": SubResource("Animation_hidyn"),
+"destroy": SubResource("Animation_vh622")
+}
+
 [node name="CharacterBody2D" type="CharacterBody2D" groups=["element"]]
 floor_constant_speed = true
 script = SubResource("GDScript_8gspm")
@@ -233,10 +287,21 @@ script = SubResource("GDScript_8gspm")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." groups=["element"]]
 shape = SubResource("RectangleShape2D_adme1")
 
+[node name="RayCast2D" type="RayCast2D" parent="."]
+material = SubResource("ShaderMaterial_rwm4h")
+target_position = Vector2(0, 128)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_r634j")
+}
+
+[node name="CanvasGroup" type="CanvasGroup" parent="."]
+clip_children = 1
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_rwm4h")
+position = Vector2(-2, -3)
 texture = ExtResource("1_u80mt")
 hframes = 3
 vframes = 8
-
-[node name="RayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(0, 128)
